@@ -5,6 +5,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 -- -----------------------------------------------------
 -- Schema wanagow
 -- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `wanagow` ;
 CREATE SCHEMA IF NOT EXISTS `wanagow` DEFAULT CHARACTER SET utf8 ;
 USE `wanagow` ;
 
@@ -241,10 +242,8 @@ CREATE TABLE IF NOT EXISTS `wanagow`.`Entretenimiento` (
   `fiestasTematicas` TINYINT(1) NOT NULL,
   `bienvenida` TINYINT(1) NOT NULL,
   `idPreferencia` INT(11) NOT NULL,
-  `idPreferencia` INT(11) NOT NULL,
   PRIMARY KEY (`idEntretenimiento`),
   UNIQUE INDEX `idEntretenimiento_UNIQUE` (`idEntretenimiento` ASC),
-  INDEX `fk_Entretenimiento_Preferencias1_idx` (`idPreferencia` ASC),
   INDEX `fk_Entretenimiento_Preferencias1_idx1` (`idPreferencia` ASC))
 ENGINE = MyISAM
 AUTO_INCREMENT = 42

@@ -5,8 +5,20 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 -- -----------------------------------------------------
 -- Schema wanagow
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `wanagow` DEFAULT CHARACTER SET latin1 ;
+CREATE SCHEMA IF NOT EXISTS `wanagow` DEFAULT CHARACTER SET utf8 ;
 USE `wanagow` ;
+
+-- -----------------------------------------------------
+-- Table `wanagow`.`Preferencias`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wanagow`.`Preferencias` (
+  `idPreferencia` INT(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`idPreferencia`),
+  UNIQUE INDEX `idPreferencias_UNIQUE` (`idPreferencia` ASC))
+ENGINE = MyISAM
+AUTO_INCREMENT = 87
+DEFAULT CHARACTER SET = utf8;
+
 
 -- -----------------------------------------------------
 -- Table `wanagow`.`Academica`
@@ -26,22 +38,96 @@ CREATE TABLE IF NOT EXISTS `wanagow`.`Academica` (
   `idPreferencia` INT(11) NOT NULL,
   PRIMARY KEY (`idAcademica`),
   UNIQUE INDEX `idAcademia_UNIQUE` (`idAcademica` ASC),
-  INDEX `fk_Academia_Preferencias1_idx` (`idPreferencia` ASC))
+  INDEX `fk_Academica_Preferencias1_idx` (`idPreferencia` ASC))
 ENGINE = MyISAM
 AUTO_INCREMENT = 42
 DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `wanagow`.`Administradores`
+-- Table `wanagow`.`Clientes`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wanagow`.`Administradores` (
-  `idAdministrador` INT(11) NOT NULL AUTO_INCREMENT,
-  `idUsuarios` INT(11) NOT NULL,
-  PRIMARY KEY (`idAdministrador`),
-  UNIQUE INDEX `idAdministrador_UNIQUE` (`idAdministrador` ASC),
-  INDEX `fk_Administradores_Usuarios1_idx` (`idUsuarios` ASC))
+CREATE TABLE IF NOT EXISTS `wanagow`.`Clientes` (
+  `idCliente` INT(11) NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NULL,
+  `apellidos` VARCHAR(45) NULL,
+  `fechaNacimiento` DATE NULL,
+  `genero` TINYINT(1) NULL,
+  `email` VARCHAR(45) NULL,
+  `password` VARCHAR(200) NULL,
+  `activo` TINYINT(1) NULL,
+  PRIMARY KEY (`idCliente`),
+  UNIQUE INDEX `idCliente_UNIQUE` (`idCliente` ASC))
 ENGINE = MyISAM
+AUTO_INCREMENT = 87
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `wanagow`.`Promotores`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wanagow`.`Promotores` (
+  `idPromotor` INT(11) NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `paterno` VARCHAR(45) NOT NULL,
+  `materno` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idPromotor`),
+  UNIQUE INDEX `idPromotores_UNIQUE` (`idPromotor` ASC))
+ENGINE = MyISAM
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `wanagow`.`TiposEventos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wanagow`.`TiposEventos` (
+  `idTipoEvento` INT(11) NOT NULL AUTO_INCREMENT,
+  `tipoEvento` VARCHAR(45) NOT NULL,
+  `detallesEvento` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idTipoEvento`),
+  UNIQUE INDEX `idTiposEventos_UNIQUE` (`idTipoEvento` ASC))
+ENGINE = MyISAM
+AUTO_INCREMENT = 78
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `wanagow`.`Destinos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wanagow`.`Destinos` (
+  `idDestino` INT(11) NOT NULL AUTO_INCREMENT,
+  `calle` VARCHAR(45) CHARACTER SET 'latin1' COLLATE 'latin1_general_ci' NOT NULL,
+  `codigoPostal` VARCHAR(45) CHARACTER SET 'latin1' COLLATE 'latin1_general_ci' NOT NULL,
+  PRIMARY KEY (`idDestino`),
+  UNIQUE INDEX `iddestino_UNIQUE` (`idDestino` ASC))
+ENGINE = MyISAM
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `wanagow`.`Eventos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wanagow`.`Eventos` (
+  `idEvento` INT(11) NOT NULL AUTO_INCREMENT,
+  `titulo` VARCHAR(45) CHARACTER SET 'latin1' COLLATE 'latin1_general_ci' NOT NULL,
+  `descripcion` TEXT CHARACTER SET 'latin1' COLLATE 'latin1_general_ci' NOT NULL,
+  `fechaEvento` DATE NOT NULL,
+  `hora` TIME NOT NULL,
+  `costo` FLOAT NOT NULL,
+  `activo` TINYINT(1) NOT NULL,
+  `imagen` TEXT CHARACTER SET 'latin1' COLLATE 'latin1_general_ci' NOT NULL,
+  `idPromotor` INT(11) NOT NULL,
+  `idTipoEvento` INT(11) NOT NULL,
+  `idDestino` INT(11) NOT NULL,
+  PRIMARY KEY (`idEvento`),
+  UNIQUE INDEX `idEventos_UNIQUE` (`idEvento` ASC),
+  INDEX `fk_Eventos_Promotores1_idx1` (`idPromotor` ASC),
+  INDEX `fk_Eventos_TiposEventos1_idx1` (`idTipoEvento` ASC),
+  INDEX `fk_Eventos_Destinos1_idx` (`idDestino` ASC))
+ENGINE = MyISAM
+AUTO_INCREMENT = 39
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -59,28 +145,13 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `wanagow`.`Clientes`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wanagow`.`Clientes` (
-  `idCliente` INT(11) NOT NULL AUTO_INCREMENT,
-  `idUsuario` INT(11) NOT NULL,
-  PRIMARY KEY (`idCliente`),
-  UNIQUE INDEX `idCliente_UNIQUE` (`idCliente` ASC),
-  INDEX `fk_Clientes_Usuarios1_idx` (`idUsuario` ASC))
-ENGINE = MyISAM
-AUTO_INCREMENT = 87
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
 -- Table `wanagow`.`ClientesPreferencias`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wanagow`.`ClientesPreferencias` (
   `idCliente` INT(11) NOT NULL,
   `idPreferencia` INT(11) NOT NULL,
-  PRIMARY KEY (`idCliente`, `idPreferencia`),
-  INDEX `fk_Clientes_has_Preferencias_Preferencias1` (`idPreferencia` ASC),
-  INDEX `fk_Clientes_has_Preferencias_Clientes1_idx` (`idCliente` ASC))
+  INDEX `fk_ClientesPreferencias_Clientes_idx` (`idCliente` ASC),
+  INDEX `fk_ClientesPreferencias_Preferencias1_idx` (`idPreferencia` ASC))
 ENGINE = MyISAM
 DEFAULT CHARACTER SET = utf8;
 
@@ -118,24 +189,10 @@ CREATE TABLE IF NOT EXISTS `wanagow`.`Cultural` (
   `otrosTuristica` TINYINT(1) NOT NULL,
   `idPreferencia` INT(11) NOT NULL,
   PRIMARY KEY (`idCultural`),
-  UNIQUE INDEX `idCultural_UNIQUE` (`idCultural` ASC),
-  INDEX `fk_Cultural_Preferencias1_idx` (`idPreferencia` ASC))
+  INDEX `fk_Cultural_Preferencias1_idx` (`idPreferencia` ASC),
+  UNIQUE INDEX `idCultural_UNIQUE` (`idCultural` ASC))
 ENGINE = MyISAM
 AUTO_INCREMENT = 42
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `wanagow`.`Destinos`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wanagow`.`Destinos` (
-  `idDestino` INT(11) NOT NULL AUTO_INCREMENT,
-  `calle` VARCHAR(45) CHARACTER SET 'latin1' COLLATE 'latin1_general_ci' NOT NULL,
-  `codigoPostal` VARCHAR(45) CHARACTER SET 'latin1' COLLATE 'latin1_general_ci' NOT NULL,
-  PRIMARY KEY (`idDestino`),
-  UNIQUE INDEX `iddestino_UNIQUE` (`idDestino` ASC))
-ENGINE = MyISAM
-AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -147,7 +204,7 @@ CREATE TABLE IF NOT EXISTS `wanagow`.`Entretenimiento` (
   `entretenimiento` TINYINT(1) NOT NULL,
   `conciertos` TINYINT(1) NOT NULL,
   `electronica` TINYINT(1) NOT NULL,
-  `jazzblues` TINYINT(1) UNSIGNED NOT NULL,
+  `jazzblues` TINYINT(1) NOT NULL,
   `trova` TINYINT(1) NOT NULL,
   `rock` TINYINT(1) NOT NULL,
   `alternativa` TINYINT(1) NOT NULL,
@@ -184,36 +241,13 @@ CREATE TABLE IF NOT EXISTS `wanagow`.`Entretenimiento` (
   `fiestasTematicas` TINYINT(1) NOT NULL,
   `bienvenida` TINYINT(1) NOT NULL,
   `idPreferencia` INT(11) NOT NULL,
+  `idPreferencia` INT(11) NOT NULL,
   PRIMARY KEY (`idEntretenimiento`),
   UNIQUE INDEX `idEntretenimiento_UNIQUE` (`idEntretenimiento` ASC),
-  INDEX `fk_Entretenimiento_Preferencias1_idx` (`idPreferencia` ASC))
+  INDEX `fk_Entretenimiento_Preferencias1_idx` (`idPreferencia` ASC),
+  INDEX `fk_Entretenimiento_Preferencias1_idx1` (`idPreferencia` ASC))
 ENGINE = MyISAM
 AUTO_INCREMENT = 42
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `wanagow`.`Eventos`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wanagow`.`Eventos` (
-  `idEvento` INT(11) NOT NULL AUTO_INCREMENT,
-  `titulo` VARCHAR(45) CHARACTER SET 'latin1' COLLATE 'latin1_general_ci' NOT NULL,
-  `descripcion` TEXT CHARACTER SET 'latin1' COLLATE 'latin1_general_ci' NOT NULL,
-  `fechaEvento` DATE NOT NULL,
-  `hora` TIME NOT NULL,
-  `costo` FLOAT NOT NULL,
-  `activo` TINYINT(1) NOT NULL,
-  `imagen` TEXT CHARACTER SET 'latin1' COLLATE 'latin1_general_ci' NOT NULL,
-  `idPromotor` INT(11) NOT NULL,
-  `idTipoEvento` INT(11) NOT NULL,
-  `idDestino` INT(11) NOT NULL,
-  PRIMARY KEY (`idEvento`),
-  UNIQUE INDEX `idEventos_UNIQUE` (`idEvento` ASC),
-  INDEX `fk_Eventos_Promotores1_idx` (`idPromotor` ASC),
-  INDEX `fk_Eventos_TiposEventos1_idx` (`idTipoEvento` ASC),
-  INDEX `fk_Eventos_destino1_idx` (`idDestino` ASC))
-ENGINE = MyISAM
-AUTO_INCREMENT = 39
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -231,32 +265,6 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `wanagow`.`Preferencias`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wanagow`.`Preferencias` (
-  `idPreferencia` INT(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`idPreferencia`),
-  UNIQUE INDEX `idPreferencias_UNIQUE` (`idPreferencia` ASC))
-ENGINE = MyISAM
-AUTO_INCREMENT = 87
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `wanagow`.`Promotores`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wanagow`.`Promotores` (
-  `idPromotor` INT(11) NOT NULL AUTO_INCREMENT,
-  `idUsuario` INT(11) NOT NULL,
-  PRIMARY KEY (`idPromotor`),
-  UNIQUE INDEX `idPromotores_UNIQUE` (`idPromotor` ASC),
-  INDEX `fk_Promotores_Usuarios1_idx` (`idUsuario` ASC))
-ENGINE = MyISAM
-AUTO_INCREMENT = 3
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
 -- Table `wanagow`.`Rutas`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wanagow`.`Rutas` (
@@ -267,42 +275,9 @@ CREATE TABLE IF NOT EXISTS `wanagow`.`Rutas` (
   `idOrigen` INT(11) NOT NULL,
   PRIMARY KEY (`idRuta`),
   UNIQUE INDEX `idRutas_UNIQUE` (`idRuta` ASC),
-  INDEX `fk_Rutas_destino1_idx` (`idDestino` ASC),
-  INDEX `fk_Rutas_origen1_idx` (`idOrigen` ASC))
+  INDEX `fk_Rutas_Destinos1_idx` (`idDestino` ASC),
+  INDEX `fk_Rutas_Origenes1_idx` (`idOrigen` ASC))
 ENGINE = MyISAM
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `wanagow`.`TiposEventos`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wanagow`.`TiposEventos` (
-  `idTipoEvento` INT(11) NOT NULL AUTO_INCREMENT,
-  `tipoEvento` VARCHAR(45) NOT NULL,
-  `detallesEvento` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`idTipoEvento`),
-  UNIQUE INDEX `idTiposEventos_UNIQUE` (`idTipoEvento` ASC))
-ENGINE = MyISAM
-AUTO_INCREMENT = 78
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `wanagow`.`Usuarios`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wanagow`.`Usuarios` (
-  `idUsuario` INT(11) NOT NULL AUTO_INCREMENT,
-  `nombre` VARCHAR(20) CHARACTER SET 'latin1' COLLATE 'latin1_general_ci' NOT NULL,
-  `apellidos` VARCHAR(45) CHARACTER SET 'latin1' COLLATE 'latin1_general_ci' NOT NULL,
-  `fechaNacimiento` DATE NOT NULL,
-  `genero` TINYINT(1) NOT NULL,
-  `email` VARCHAR(45) CHARACTER SET 'latin1' COLLATE 'latin1_general_ci' NOT NULL,
-  `password` VARCHAR(45) CHARACTER SET 'latin1' COLLATE 'latin1_general_ci' NOT NULL,
-  `activo` TINYINT(1) NOT NULL,
-  PRIMARY KEY (`idUsuario`),
-  UNIQUE INDEX `idUsuarios_UNIQUE` (`idUsuario` ASC))
-ENGINE = MyISAM
-AUTO_INCREMENT = 51
 DEFAULT CHARACTER SET = utf8;
 
 
